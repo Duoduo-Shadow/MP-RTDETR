@@ -1,0 +1,75 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# --- Envs / IDE ---
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+
+# --- Build artifacts ---
+build/
+dist/
+*.whl
+
+# --- Logs / tensorboard ---
+logs/
+log/
+*.log
+tb/
+tensorboard/
+events.out.tfevents*
+runs/
+wandb/
+
+# --- Model weights ---
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+*.engine
+weights/
+checkpoints/
+
+# --- Datasets and annotations ---
+/dataset/
+/datasets/
+/data/
+/images/
+/labels/
+/annotations/
+*.xml
+*.json
+
+# --- Manuscripts and paper artifacts ---
+paper_template/
+paper_figures/
+*.pdf
+*.docx
+*.tex
+*.bib
+*.aux
+*.bbl
+*.blg
+*.out
+*.toc
+*.synctex.gz
+response*/
+rebuttal*/
+
+# --- Archives ---
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
