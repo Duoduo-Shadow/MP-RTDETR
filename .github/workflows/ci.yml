@@ -26,7 +26,8 @@ jobs:
 
       - name: Lint (syntax)
         run: |
-          python -m py_compile tools/train.py tools/val.py tools/demo_infer.py
+          python -m py_compile tools/train.py tools/val.py tools/demo_infer.py tools/export.py
+          python -m py_compile scripts/split_dataset.py scripts/convert_voc_to_yolo.py
           python -m py_compile src/models/mp_rtdetr.py src/models/modules.py src/models/losses.py
           python -m py_compile src/datasets/yolo_dataset.py src/postprocess.py
           python -m py_compile src/utils/nms.py src/utils/metrics.py src/utils/logger.py src/utils/viz.py

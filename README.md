@@ -14,12 +14,13 @@ Core modifications in this release:
 ```text
 MP-RTDETR/
 ├── configs/                 # yaml configs
+├── scripts/                 # dataset split and label conversion tools
 ├── src/
 │   ├── models/              # model + custom modules + loss
 │   ├── datasets/            # dataset reader and augment
 │   ├── utils/               # metrics, nms, logger, viz
 │   └── postprocess.py
-├── tools/                   # train / val / demo entrypoints
+├── tools/                   # train / val / demo / export entrypoints
 ├── assets/                  # small demo-only assets
 ├── requirements.txt
 └── README.md
@@ -89,19 +90,49 @@ python tools/demo_infer.py \
   --out outputs/demo
 ```
 
-## 7. Model Weights
+## 7. Export (ONNX)
+
+```bash
+python tools/export.py \
+  --cfg configs/mp_rtdetr_uav.yaml \
+  --ckpt outputs/exp/last.pt \
+  --out outputs/export/mp_rtdetr.onnx
+```
+
+## 8. Data Utilities
+
+Split one image/label folder into train/val:
+
+```bash
+python scripts/split_dataset.py \
+  --images data/raw/images \
+  --labels data/raw/labels \
+  --out data/VisDrone \
+  --train-ratio 0.9
+```
+
+Convert VOC XML labels to YOLO TXT labels:
+
+```bash
+python scripts/convert_voc_to_yolo.py \
+  --xml-dir data/voc/Annotations \
+  --out-dir data/voc/yolo_labels \
+  --classes data/voc/classes.txt
+```
+
+## 9. Model Weights
 
 Pretrained weights are not distributed in this repository.
 
 An external download link for released checkpoints will be provided after paper acceptance. Until then, please train from scratch with the scripts above.
 
-## 8. Repro Notes
+## 10. Repro Notes
 
 - Fix seeds in config (`seed`) for repeatable runs.
 - Start with smaller `input_size` or `batch_size` if GPU memory is limited.
 - Keep `num_workers` consistent when comparing speed.
 
-## 9. Citation
+## 11. Citation
 
 ```bibtex
 @article{mp_rtdetr_2026,
@@ -112,11 +143,33 @@ An external download link for released checkpoints will be provided after paper 
 }
 ```
 
-## 10. License
+## 12. License
 
 Released under Apache-2.0. See `LICENSE` for full text.
 
-## 11. FAQ
+## 13. Reviewer Quick Check
+
+Minimal sanity path for reviewers:
+
+```bash
+# 1) install
+pip install -r requirements.txt
+
+# 2) run lightweight CI-equivalent local checks
+python -m py_compile tools/train.py tools/val.py tools/demo_infer.py tools/export.py
+python -m py_compile src/models/mp_rtdetr.py src/models/modules.py src/models/losses.py
+
+# 3) quick forward smoke
+python - << 'PY'
+import torch
+from src.models import MPRTDETR
+m = MPRTDETR(num_classes=10, width=256, num_queries=100)
+y = m(torch.randn(1,3,640,640))
+print(y['pred'].shape)
+PY
+```
+
+## 14. FAQ
 
 **Q: Why are there no datasets or checkpoints in this repo?**  
 A: To keep the repository lightweight, compliant, and fully public-safe.
