@@ -5,9 +5,17 @@ This codebase keeps only the implementation-focused parts for reproducible train
 
 Core modifications in this release:
 - Feature/scale refinement blocks (`FSRA`)
+- Multi-branch mixing blocks (`MMB`)
 - Direction-aware enhancement block (`PDEGConv`)
 - Cross-scale adaptive fusion (`CASADSF`)
 - IoU-aware query ranking in decoder-side selection
+
+Implementation mapping (claim -> code):
+- `FSRA`: `src/models/modules.py` (`class FSRA`), used in `src/models/mp_rtdetr.py`
+- `MMB`: `src/models/modules.py` (`class MMB`), used in `src/models/mp_rtdetr.py`
+- `PDEGConv`: `src/models/modules.py` (`class PDEGConv`), used in `src/models/mp_rtdetr.py`
+- `CASADSF`: `src/models/modules.py` (`class CASADSF`), used in `src/models/mp_rtdetr.py`
+- IoU-aware query ranking: `src/models/mp_rtdetr.py` (`self.iou_head`, score fusion, `topk` query selection)
 
 ## 1. Project Layout
 

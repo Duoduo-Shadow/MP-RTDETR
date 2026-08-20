@@ -31,6 +31,24 @@ class FSRA(nn.Module):
         return x * ch * sp
 
 
+class MMB(nn.Module):
+    def __init__(self, c):
+        super().__init__()
+        hidden = max(32, c // 2)
+        self.norm = nn.BatchNorm2d(c)
+        self.dw = nn.Conv2d(c, c, 3, 1, 1, groups=c, bias=False)
+        self.pw1 = nn.Conv2d(c, hidden, 1, 1, 0, bias=False)
+        self.act = nn.GELU()
+        self.pw2 = nn.Conv2d(hidden, c, 1, 1, 0, bias=False)
+        self.gate = nn.Sequential(nn.AdaptiveAvgPool2d(1), nn.Conv2d(c, c, 1), nn.Sigmoid())
+
+    def forward(self, x):
+        y = self.dw(self.norm(x))
+        y = self.pw2(self.act(self.pw1(y)))
+        y = y * self.gate(x)
+        return x + y
+
+
 class PDEGConv(nn.Module):
     def __init__(self, c):
         super().__init__()

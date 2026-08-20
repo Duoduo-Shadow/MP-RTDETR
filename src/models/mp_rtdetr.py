@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .modules import ConvBNAct, FSRA, PDEGConv, CASADSF
+from .modules import ConvBNAct, FSRA, MMB, PDEGConv, CASADSF
 
 
 class TinyBackbone(nn.Module):
@@ -45,6 +45,10 @@ class MPRTDETR(nn.Module):
         self.fsra4 = FSRA(c4)
         self.fsra5 = FSRA(c5)
 
+        self.mmb3 = MMB(c3)
+        self.mmb4 = MMB(c4)
+        self.mmb5 = MMB(c5)
+
         self.pdeg3 = PDEGConv(c3) if edge_gate else nn.Identity()
         self.pdeg4 = PDEGConv(c4) if edge_gate else nn.Identity()
         self.pdeg5 = PDEGConv(c5) if edge_gate else nn.Identity()
@@ -81,9 +85,9 @@ class MPRTDETR(nn.Module):
     def forward(self, x):
         p3, p4, p5 = self.backbone(x)
 
-        p3 = self.fsra3(self.pdeg3(p3))
-        p4 = self.fsra4(self.pdeg4(p4))
-        p5 = self.fsra5(self.pdeg5(p5))
+        p3 = self.fsra3(self.mmb3(self.pdeg3(p3)))
+        p4 = self.fsra4(self.mmb4(self.pdeg4(p4)))
+        p5 = self.fsra5(self.mmb5(self.pdeg5(p5)))
 
         p4_up = F.interpolate(self.lat5(p5), size=p4.shape[-2:], mode='nearest')
         p4 = self.fuse4(p4, p4_up)
@@ -105,6 +109,7 @@ class MPRTDETR(nn.Module):
         idx = torch.topk(score.squeeze(-1), k=k, dim=1).indices
         idx = idx.unsqueeze(-1).expand(-1, -1, pred.shape[-1])
         pred = torch.gather(pred, 1, idx)
+        score = torch.gather(score, 1, idx[..., :1])
 
         return {
             "pred": pred,
