@@ -86,7 +86,7 @@ Default outputs:
 python tools/val.py --cfg configs/mp_rtdetr_uav.yaml --ckpt outputs/exp/last.pt
 ```
 
-Current validation script reports a lightweight `mAP@0.50` for fast iteration.
+Current validation script reports `mAP@0.50` for routine experiment checks.
 
 ## 6. Inference Demo
 
@@ -155,19 +155,19 @@ An external download link for released checkpoints will be provided after paper 
 
 Released under Apache-2.0. See `LICENSE` for full text.
 
-## 13. Reviewer Quick Check
+## 13. Quick Check
 
-Minimal sanity path for reviewers:
+Minimal local verification steps:
 
 ```bash
 # 1) install
 pip install -r requirements.txt
 
-# 2) run lightweight CI-equivalent local checks
+# 2) run the same local checks as CI
 python -m py_compile tools/train.py tools/val.py tools/demo_infer.py tools/export.py
 python -m py_compile src/models/mp_rtdetr.py src/models/modules.py src/models/losses.py
 
-# 3) quick forward smoke
+# 3) run a forward-pass smoke test
 python - << 'PY'
 import torch
 from src.models import MPRTDETR
@@ -180,7 +180,7 @@ PY
 ## 14. FAQ
 
 **Q: Why are there no datasets or checkpoints in this repo?**  
-A: To keep the repository lightweight, compliant, and fully public-safe.
+A: To keep the repository compact and compliant for public release.
 
 **Q: Can I use absolute paths in configs?**  
 A: Avoid absolute paths. Use relative paths so experiments are portable.

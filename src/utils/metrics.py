@@ -9,7 +9,7 @@ def _xywh_to_xyxy(box):
 
 
 def evaluate_map50(pred_list, target_list, num_classes=10):
-    # simple AP50 for quick validation, not COCO full protocol
+    # AP@0.50 evaluation for fast iteration (not COCO mAP protocol)
     ap_list = []
 
     for cls_id in range(num_classes):
@@ -63,7 +63,7 @@ def evaluate_map50(pred_list, target_list, num_classes=10):
         recall = tp_cum / (n_gt + 1e-6)
         precision = tp_cum / (tp_cum + fp_cum + 1e-6)
 
-        # 11-point interpolation
+        # VOC-style 11-point interpolation
         ap = 0.0
         for r in torch.linspace(0, 1, 11):
             p = precision[recall >= r]

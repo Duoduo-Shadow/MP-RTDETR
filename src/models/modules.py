@@ -78,9 +78,7 @@ class CASADSF(nn.Module):
         self.mix = ConvBNAct(c * 2, c, k=1, s=1)
 
     def forward(self, fd, fs):
-        # small trick: keep shallow texture for tiny objs
         fd = fd * self.deep_gate(fd)
         fs = fs * self.shallow_gate(fs)
         out = self.mix(torch.cat([fd, fs], dim=1))
-        # print('cas', out.shape)  # debug
         return out

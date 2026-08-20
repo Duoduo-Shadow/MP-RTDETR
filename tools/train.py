@@ -90,7 +90,6 @@ def main():
         }
         torch.save(ckpt, save_dir / 'last.pt')
 
-        # lr adjust 2026.08.12
         if (ep + 1) % 30 == 0:
             for g in optim.param_groups:
                 g['lr'] *= 0.5
